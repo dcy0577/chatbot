@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from fastapi import Request
 from config import settings
-import typing as t
+from typing import List
 import uvicorn
 import os
 
@@ -81,13 +81,22 @@ async def upload_file(request: Request, file: UploadFile):
     
 
 
+@app.post("/delete")
+async def delete_all_points_in_collection(collection_name: str):
+    # get all points in collection
+
+    # delete all points in collection
+    
+    print(generated_response)
+    return {"response": generated_response, "relevant_docs": relevant_docs}
+
+
 @app.post("/query")
 async def query_index(request: Request, input_query: UserQuery):
     print(input_query)
     generated_response, relevant_docs = qdrant_index.generate_response(question=input_query.query)
     print(generated_response)
     return {"response": generated_response, "relevant_docs": relevant_docs}
-
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", reload=True, port=8000)
