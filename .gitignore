@@ -35,3 +35,5 @@ yarn-error.log*
 
 backend/app/data/qdrant_storage
 streamlit/db
+streamlit/db_no_split_text
+streamlit/db_chunk2000_overlap200
