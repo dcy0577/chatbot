@@ -146,7 +146,7 @@ regex==2022.7.9
 requests==2.29.0
 responses==0.13.3
 rfc3986==1.5.0
-rich==13.4.1
+rich==13.0.1
 sacremoses==0.0.43
 scikit-learn==1.2.2
 scipy==1.10.1
