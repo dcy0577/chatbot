@@ -1,0 +1,9 @@
+[browser]
+
+# Whether to send usage statistics to Streamlit.
+# Default: true
+gatherUsageStats = false
+
+# Automatically rerun script when the file is modified on disk.
+# Default: false
+runOnSave = true

@@ -29,6 +29,8 @@ def set_open_api_key(api_key: str):
 def app():
     # Main app function
     st.header("📖 Vectorwokrs Documentation Chatbot Demo")
+    st.write("My knowledge is based on the [documentation](https://app-help.vectorworks.net/2023/eng/index.htm) of Vectorworks.\
+             Ask me questions about the documentation and I will try to answer them! 😎")
 
     open_api_key_input = st.text_input(
             "Openai API Key",
