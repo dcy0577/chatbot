@@ -1,6 +1,8 @@
 """Python file to serve as the frontend"""
+import os
+import sys
 from auth.auth import authenticate
-# sys.path.append(os.path.abspath('.'))
+sys.path.append(os.path.abspath('.'))
 import streamlit as st
 from streamlit_chat import message
 from chain import load_chain

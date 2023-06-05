@@ -1,4 +1,6 @@
 import os
+import sys
+sys.path.append(os.path.abspath('.'))
 from typing import Any, List
 from langchain.vectorstores import Chroma
 from langchain.embeddings import HuggingFaceEmbeddings
@@ -7,7 +9,7 @@ from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTex
 
 input_folder_path = "/home/dchangyu/LLM_experiments/data_markdown"
 # persist_directory = '/home/dchangyu/chatbot/streamlit/db_chunk2000_overlap200'
-persist_directory = '/home/dchangyu/chatbot/streamlit/db_no_split_text'
+persist_directory = './db_no_split_text'
 # Embeddings
 embeddings = HuggingFaceEmbeddings(model_name="all-mpnet-base-v2")
 

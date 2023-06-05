@@ -1,7 +1,7 @@
 import sys
 import os
+sys.path.append(os.path.abspath('.'))
 from langchain import LLMChain, PromptTemplate
-# sys.path.append(os.path.abspath('.'))
 import streamlit as st
 from langchain.chains import ConversationChain, ConversationalRetrievalChain
 from langchain.chains.conversational_retrieval.prompts import CONDENSE_QUESTION_PROMPT
