@@ -1,9 +1,10 @@
+import os
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.docstore.document import Document
 from langchain.vectorstores import Qdrant
 from langchain.document_loaders import TextLoader
 from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.document_loaders import TextLoader, PDFMinerLoader
+from langchain.document_loaders import TextLoader, PDFMinerLoader, PyPDFLoader, UnstructuredMarkdownLoader
 from langchain.chains.question_answering import load_qa_chain
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from langchain.llms import OpenAI
@@ -16,6 +17,12 @@ from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 from config import settings
 import uuid
 import logging
+from llama_index import (GPTVectorStoreIndex, LLMPredictor, ServiceContext,
+                         SimpleDirectoryReader)
+from llama_index.storage.storage_context import StorageContext
+from llama_index.vector_stores.qdrant import QdrantVectorStore
+from llama_index.indices.postprocessor import FixedRecencyPostprocessor
+from llama_index.indices.postprocessor.cohere_rerank import CohereRerank
 
 
 logging.basicConfig(level=logging.INFO, format='=========== %(asctime)s :: %(levelname)s :: %(message)s')
@@ -45,11 +52,28 @@ class QdrantIndex():
         self.embedding_model =  embedding_model
         self.embedding_size = self.embedding_model.get_sentence_embedding_dimension()
         self.collection_name = COLLECTION_NAME
-        self.qdrant_client.recreate_collection(
-            collection_name=self.collection_name,
-            vectors_config=VectorParams(size=self.embedding_size, distance=Distance.COSINE),
-        ) 
-        logging.info(f"Collection {COLLECTION_NAME} is successfully created.")
+
+        exsisting_collections = self.qdrant_client.get_collections().collections
+        if self.collection_name not in [collection.name for collection in exsisting_collections]:
+            self.qdrant_client.create_collection(
+                collection_name=self.collection_name,
+                vectors_config=VectorParams(size=self.embedding_size, distance=Distance.COSINE),
+            ) 
+            logging.info(f"Collection {COLLECTION_NAME} is successfully created.")
+        else:
+            logging.info(f"Collection {COLLECTION_NAME} already exists.")
+
+    def delete_points(self):
+        # get all points ids
+        response = self.qdrant_client.scroll(collection_name=self.collection_name)
+        ids = [point.id for point in response[0]]
+        if len(ids) == 0:
+            logging.info(f"Collection {COLLECTION_NAME} is empty.")
+            return
+        else:
+            # delete all points
+            response = self.qdrant_client.delete(collection_name=self.collection_name, points_selector=rest.PointIdsList(points=ids))
+            return response
 
     
     def insert_into_index(self, filepath: str, filename: str):
@@ -59,7 +83,7 @@ class QdrantIndex():
             filepath (str): full path of the pdf file
             filename (str): name of pdf file
         """
-        loader = PDFMinerLoader(filepath)
+        loader = PyPDFLoader(filepath)
         docs = loader.load()
         text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=30)
         documents = text_splitter.split_documents(docs)
@@ -85,6 +109,38 @@ class QdrantIndex():
             ),
         )
         logging.info("Index update successfully done!")
+    
+    def add_md_to_index(self, input_folder: str):
+        documents = []
+        for file in os.listdir(input_folder):
+            if file.endswith('.md'):
+                md_path = os.path.join(input_folder, file)
+                loader = UnstructuredMarkdownLoader(md_path)
+                documents.extend(loader.load())
+
+        # Text Splitter
+        # text_splitter = RecursiveCharacterTextSplitter.from_language(language=Language.MARKDOWN, chunk_size=2000, chunk_overlap=0)
+        # text_splitter = NLTKTextSplitter(chunk_size=1000)
+        # docs = text_splitter.split_documents(documents)
+
+        # no splitting
+        docs = [doc for doc in documents]
+        
+        # Create the vectorized db
+        # Vectorstore: https://python.langchain.com/en/latest/modules/indexes/vectorstores.html
+        service_context = ServiceContext.from_defaults()
+        vector_store = QdrantVectorStore(client=self.qdrant_client, collection_name=self.collection_name)
+        storage_context = StorageContext.from_defaults(vector_store=vector_store)
+        index = GPTVectorStoreIndex.from_documents(
+                docs, storage_context=storage_context, service_context=service_context
+                )
+
+        query_engine = index.as_query_engine(
+            similarity_top_k=3
+        )
+
+        return query_engine
+
         
 
     def generate_response(self, question: str):

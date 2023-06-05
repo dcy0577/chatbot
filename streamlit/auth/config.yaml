@@ -1,0 +1,17 @@
+credentials:
+  usernames:
+    test1:
+      email: test1@test.com
+      name: test user 1
+      password: test1 # To be replaced with hashed password
+    test2:
+      email: test2@test.com
+      name: test user 2
+      password: test2 # To be replaced with hashed password
+cookie:
+  expiry_days: 30
+  key: random_signature_key # Must be string
+  name: random_cookie_name
+preauthorized:
+  emails:
+  - test1@test.com

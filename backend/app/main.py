@@ -61,7 +61,7 @@ async def upload_file(request: Request, file: UploadFile):
     status = "success"
     print(file.size)
     try:
-        filepath = os.path.join('app','documents', os.path.basename(filename))
+        filepath = os.path.join('documents', os.path.basename(filename))
         contents = await file.read()
         with open(filepath, 'wb') as f:
             f.write(contents)
@@ -82,14 +82,13 @@ async def upload_file(request: Request, file: UploadFile):
 
 
 @app.post("/delete")
-async def delete_all_points_in_collection(collection_name: str):
-    # get all points in collection
+async def delete_all_points_in_collection():
+    # delete all points
+    qdrant_index.delete_points()
 
-    # delete all points in collection
-    
-    print(generated_response)
-    return {"response": generated_response, "relevant_docs": relevant_docs}
-
+@app.post("/ingest")
+async def ingest_data():
+    qdrant_index.add_md_to_index("/home/dchangyu/LLM_experiments/data_markdown")
 
 @app.post("/query")
 async def query_index(request: Request, input_query: UserQuery):

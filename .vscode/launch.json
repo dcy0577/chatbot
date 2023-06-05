@@ -1,0 +1,27 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "fastapi",
+            "type": "python",
+            "request": "launch",
+            "program": "main.py",
+            "cwd": "${workspaceFolder}/backend/app",
+            "justMyCode": false,
+        },
+        {
+            "name": "streamlit",
+            "type": "python",
+            "module": "streamlit",
+            "request": "launch",
+            "cwd": "${workspaceFolder}/streamlit",
+            "justMyCode": false,
+            "args": [
+                "run",
+                "main.py",
+                "--server.port",
+                "9999"
+           ]
+        },
+    ]
+}

@@ -34,3 +34,4 @@ yarn-error.log*
 *.py[cod]
 
 backend/app/data/qdrant_storage
+streamlit/db
