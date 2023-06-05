@@ -9,7 +9,7 @@ from langchain.text_splitter import CharacterTextSplitter, RecursiveCharacterTex
 
 input_folder_path = "/home/dchangyu/LLM_experiments/data_markdown"
 # persist_directory = '/home/dchangyu/chatbot/streamlit/db_chunk2000_overlap200'
-persist_directory = './db_no_split_text'
+persist_directory = 'streamlit/db_no_split_text'
 # Embeddings
 embeddings = HuggingFaceEmbeddings(model_name="all-mpnet-base-v2")
 

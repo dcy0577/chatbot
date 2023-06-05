@@ -7,7 +7,7 @@ import yaml
 from yaml.loader import SafeLoader
 
 def authenticate():
-    with open('./auth/config.yaml') as file:
+    with open('streamlit/auth/config.yaml') as file:
         config = yaml.load(file, Loader=SafeLoader)
 
     for key, value in config['credentials']["usernames"].items():
