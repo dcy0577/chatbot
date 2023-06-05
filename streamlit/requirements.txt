@@ -116,7 +116,7 @@ pooch==1.4.0
 portalocker==2.7.0
 posthog==3.0.1
 prompt-toolkit==3.0.38
-protobuf==3.20.3
+protobuf==4.21.6
 psutil==5.9.5
 ptyprocess==0.7.0
 pure-eval==0.2.2
