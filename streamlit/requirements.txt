@@ -95,7 +95,7 @@ mypy-extensions==0.4.3
 nest-asyncio==1.5.6
 nltk==3.8.1
 numexpr==2.8.4
-numpy==1.23.5
+numpy
 olefile==0.46
 onnxruntime==1.15.0
 openai==0.27.7
