@@ -11,7 +11,7 @@ from ingest import persist_directory, embeddings
 from langchain.vectorstores import Chroma
 
 @st.cache_resource
-def load_chain():
+def load_chain(openai_api_key: str):
     """Logic for loading the chain you want to use should go here."""
     # load vector db if it exists
     with os.scandir(persist_directory) as it:
@@ -38,7 +38,7 @@ def load_chain():
         template=tech_template, input_variables=["context", "question"]
     )
 
-    chat = ChatOpenAI(openai_api_key=st.session_state.get("OPENAI_API_KEY"), temperature=0)
+    chat = ChatOpenAI(openai_api_key=openai_api_key, temperature=0)
 
     question_generator = LLMChain(llm=chat, verbose=True, prompt=CONDENSE_QUESTION_PROMPT)
     doc_chain = load_qa_with_sources_chain(chat, chain_type="stuff", 

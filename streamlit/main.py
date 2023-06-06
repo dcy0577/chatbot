@@ -6,6 +6,7 @@ sys.path.append(os.path.abspath('.'))
 import streamlit as st
 from streamlit_chat import message
 from chain import load_chain
+import traceback
 
 
 def submit():
@@ -54,7 +55,7 @@ def app():
 
     else:
         st.markdown("Open API Key Configured!")
-        chain = load_chain()
+        chain = load_chain(st.session_state.get("OPENAI_API_KEY"))
 
         if "generated" not in st.session_state:
             st.session_state["generated"] = []
@@ -75,7 +76,7 @@ def app():
                 try:
                     output = chain({"question": user_input, "chat_history": st.session_state["chat_history"]})
                 except Exception as e:
-                    st.error(f"Error: {e}")
+                    st.error(f"Error: {traceback.format_exc()}")
                     # clean up the query
                     st.session_state.query = ''
                     st.stop()
