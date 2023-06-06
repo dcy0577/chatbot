@@ -14,13 +14,14 @@
             "type": "python",
             "module": "streamlit",
             "request": "launch",
-            "cwd": "${workspaceFolder}/streamlit",
+            "cwd": "${workspaceFolder}",
             "justMyCode": false,
             "args": [
                 "run",
-                "main.py",
+                "streamlit/main.py",
                 "--server.port",
-                "9999"
+                "9999",
+                "--logger.level=debug",
            ]
         },
     ]

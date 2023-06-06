@@ -10,7 +10,7 @@ from langchain.chains.qa_with_sources import load_qa_with_sources_chain
 from ingest import persist_directory, embeddings
 from langchain.vectorstores import Chroma
 
-
+@st.cache_resource
 def load_chain():
     """Logic for loading the chain you want to use should go here."""
     # load vector db if it exists

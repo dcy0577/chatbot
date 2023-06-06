@@ -22,6 +22,7 @@ def set_open_api_key(api_key: str):
         if api_key is None or api_key == '':
             st.session_state["open_api_key_configured"] = False
             print('OPENAI API key is NOT Configured Successfully!')
+            st.stop()
         else:
             st.session_state["OPENAI_API_KEY"] = api_key
             st.session_state["open_api_key_configured"] = True
@@ -48,6 +49,7 @@ def app():
 
     if not st.session_state.get("open_api_key_configured"):
         st.error("Please configure your Open API key!")
+        st.stop()
 
 
     else:
@@ -70,7 +72,13 @@ def app():
         
         if user_input:
             with st.spinner("generating..."):
-                output = chain({"question": user_input, "chat_history": st.session_state["chat_history"]})
+                try:
+                    output = chain({"question": user_input, "chat_history": st.session_state["chat_history"]})
+                except Exception as e:
+                    st.error(f"Error: {e}")
+                    # clean up the query
+                    st.session_state.query = ''
+                    st.stop()
                 st.session_state["chat_history"].append((user_input, output["answer"]))
                 # only keep the last 5 history
                 if len(st.session_state["chat_history"]) > 5:
@@ -78,6 +86,8 @@ def app():
 
                 st.session_state.past.append(user_input)
                 st.session_state.generated.append(output["answer"])
+                # clean up the query
+                st.session_state.query = ''
 
         if st.session_state["generated"]:
 
