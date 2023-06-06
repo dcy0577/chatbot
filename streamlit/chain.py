@@ -21,13 +21,12 @@ def load_chain(openai_api_key: str):
             raise Exception("No vector db found. Please run ingest.py to create one.")
 
     tech_template = """
-    You are a chatbot that answers questions about vectorworks.
+    You are a helpful assistant that answers user's questions about vectorworks.
     Given the following extracted contents of markdown format documentation and a question, create a final answer with references ("SOURCES"). 
-    ALWAYS return a "SOURCES" part in your answer.
     If you don't find the answer to the user's question with the contents provided to you, answer that you didn't find the answer in the contents and propose him to rephrase his query with more details.
     If needed, provide your answer in bullet points.
     If asked an irrelevant question, you will gently guide the conversation back to the topic of the documentation of vectorworks.
-    The content are given in markdown format. You should use markdown syntax to understand the content.
+    The extracted contents are given in markdown format. You should use markdown syntax to understand the content.
 
     Question: {question}
     =========

@@ -32,10 +32,21 @@ def set_open_api_key(api_key: str):
         
 def app():
     # Main app function
-    st.header("📖 Vectorwokrs Documentation Chatbot Demo")
+    st.header("📖 Vectorworks Documentation Chatbot Demo")
     st.write("My knowledge is based on the [documentation](https://app-help.vectorworks.net/2023/eng/index.htm) of Vectorworks.\
              Ask me questions about the documentation and I will try to answer them! 😎")
+    st.markdown("""
+                > For examples:
+                >> - *How many modes are there for the rotate tool in the Vectorworks? What are they?*
 
+                > Then you can verify the bot's answers in the related [documentation](https://app-help.vectorworks.net/2023/eng/VW2023_Guide/Objects_edit1/Rotate_tool.htm).
+                > You can ask some follow-up questions, since the bot has memory up to 5 chats:
+
+                >> - *Thanks! I would like to know more about the the alignment rotation mode. Can you show me how to use it?*
+
+                > You can also ask the native ChatGPT same questions to compare the results.
+                > We welcome your feedback! Reach me out through changyu.du@tum.de
+                """)
     open_api_key_input = st.text_input(
             "Openai API Key",
             type="password",
@@ -112,7 +123,6 @@ if __name__ == "__main__":
     if authentication_status:
         authenticator.logout('Logout', 'main', key='unique_key')
         if not st.session_state['logout']:
-            
             st.write(f'Welcome *{name}*')
             # your application
             app()
