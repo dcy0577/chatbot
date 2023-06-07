@@ -7,18 +7,28 @@ from langchain.chains import ConversationChain, ConversationalRetrievalChain
 from langchain.chains.conversational_retrieval.prompts import CONDENSE_QUESTION_PROMPT
 from langchain.chat_models import ChatOpenAI
 from langchain.chains.qa_with_sources import load_qa_with_sources_chain
-from ingest import persist_directory, embeddings
+from ingest import persist_directory, load_embeddings
 from langchain.vectorstores import Chroma
 
 @st.cache_resource
-def load_chain(openai_api_key: str):
-    """Logic for loading the chain you want to use should go here."""
-    # load vector db if it exists
+def load_persist_db(persist_directory, _embeddings):
     with os.scandir(persist_directory) as it:
         if any(it):
-            db = Chroma(persist_directory=persist_directory, embedding_function=embeddings)
+            return Chroma(persist_directory=persist_directory, embedding_function=_embeddings)
         else:
             raise Exception("No vector db found. Please run ingest.py to create one.")
+
+def load_chain(openai_api_key: str):
+    """Logic for loading the chain you want to use should go here."""
+
+    # initialize chat model
+    chat = ChatOpenAI(openai_api_key=openai_api_key, temperature=0)
+
+    # load embeddings
+    embeddings = load_embeddings()
+
+    # load vector db if it exists
+    db = load_persist_db(persist_directory, embeddings)
 
     tech_template = """
     You are a helpful assistant that answers user's questions about vectorworks.
@@ -37,8 +47,6 @@ def load_chain(openai_api_key: str):
         template=tech_template, input_variables=["context", "question"]
     )
 
-    chat = ChatOpenAI(openai_api_key=openai_api_key, temperature=0)
-
     question_generator = LLMChain(llm=chat, verbose=True, prompt=CONDENSE_QUESTION_PROMPT)
     doc_chain = load_qa_with_sources_chain(chat, chain_type="stuff", 
                                         verbose=True, 
@@ -46,6 +54,7 @@ def load_chain(openai_api_key: str):
                                         document_variable_name = "context")
     chain = ConversationalRetrievalChain(retriever=db.as_retriever(search_kwargs={"k": 2}), 
                                         question_generator=question_generator, 
-                                        combine_docs_chain=doc_chain, 
+                                        combine_docs_chain=doc_chain,
+                                        max_tokens_limit=4096, 
                                         verbose =True)
     return chain

@@ -1,7 +1,6 @@
 """Python file to serve as the frontend"""
 import os
 import sys
-from dotenv import load_dotenv
 from auth.auth import authenticate
 sys.path.append(os.path.abspath('.'))
 import streamlit as st
