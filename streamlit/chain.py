@@ -22,7 +22,7 @@ def load_chain(openai_api_key: str):
     """Logic for loading the chain you want to use should go here."""
 
     # initialize chat model
-    chat = ChatOpenAI(openai_api_key=openai_api_key, temperature=0)
+    chat = ChatOpenAI(model_name="gpt-4", openai_api_key=openai_api_key, temperature=0)
 
     # load embeddings
     embeddings = load_embeddings()
@@ -36,7 +36,7 @@ def load_chain(openai_api_key: str):
     If you don't find the answer to the user's question with the contents provided to you, answer that you didn't find the answer in the contents and propose him to rephrase his query with more details.
     If needed, provide your answer in bullet points.
     If asked an irrelevant question, you will gently guide the conversation back to the topic of the documentation of vectorworks.
-    The extracted contents are given in markdown format. You should use markdown syntax to understand the content.
+    The extracted contents are given in markdown format. You should use markdown syntax to understand the content. You don't need to use markdown syntax to answer the user's question.
 
     Question: {question}
     =========
